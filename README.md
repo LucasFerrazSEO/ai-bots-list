@@ -1,57 +1,79 @@
-# ai-bots-list — lista grátis e de código aberto de bots de IA + verificador de robots.txt
+**English** · [Português (Brasil)](README.pt-BR.md)
 
-`ai-bots-list` é um conjunto gratuito e de código aberto com uma lista
-versionada de bots de IA conhecidos (busca com IA e treinamento), em
-`ai_bots.json`, mais uma ferramenta de linha de comando
-(`ai_bots_check.py`) que confere um `robots.txt` contra essa lista e diz,
-bot por bot, se ele está liberado, bloqueado ou sem regra explícita.
+# ai-bots-list
 
-## O que é
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg) [![Data: CC BY 4.0](https://img.shields.io/badge/Data-CC%20BY%204.0-lightgrey.svg)](DATA-LICENSE)
 
-`ai_bots.json` separa os bots em duas categorias:
+`ai-bots-list` is a free, open source, versioned list of known AI bots
+(AI search and training) in `ai_bots.json`, plus a command line tool
+(`ai_bots_check.py`) that checks a `robots.txt` against that list. For
+each bot it tells you whether it is allowed, blocked or has no explicit
+rule. The checker runs locally with the Python standard library only.
 
-- **busca** — bots que alimentam respostas de assistentes e buscadores com
-  IA em tempo real (retrieval): OAI-SearchBot, PerplexityBot,
-  Google-Extended, Bingbot e afins. Liberar tende a significar aparecer
-  nas respostas; bloquear tende a significar sair do corpus de resposta.
-- **treinamento** — bots que coletam conteúdo para treinar modelos ou
-  compor bases abertas: GPTBot, ClaudeBot, CCBot e afins. Liberar tende a
-  significar entrar no corpus de treinamento de versões futuras.
+## Contents
 
-Cada entrada leva `user_agent`, `provedor`, `produto` e `categoria`. A
-lista é curadoria manual, atualizada quando um provedor anuncia ou muda um
-user agent — não é raspagem automática de terceiro.
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [FAQ](#faq)
+- [Limitations](#limitations)
+- [Contributing](#contributing)
+- [Author](#author)
+- [License](#license)
 
-## Instalação
+## Features
 
-Só biblioteca padrão do Python (3.9 ou mais recente). Sem dependência
-externa.
+`ai_bots.json` splits the bots into two categories:
+
+- **busca** (search): bots that feed real-time answers from AI assistants
+  and AI search engines (retrieval), such as OAI-SearchBot, PerplexityBot,
+  Google-Extended, Bingbot and similar. Allowing them tends to mean
+  showing up in answers; blocking them tends to mean leaving the answer
+  corpus.
+- **treinamento** (training): bots that collect content to train models or
+  build open datasets, such as GPTBot, ClaudeBot, CCBot and similar.
+  Allowing them tends to mean entering the training corpus of future
+  versions.
+
+Each entry has `user_agent`, `provedor`, `produto` and `categoria`. The
+list is curated by hand and updated when a provider announces or changes
+a user agent. It is not automated scraping of a third-party source.
+
+## Installation
+
+Python 3.9 or newer, standard library only. No external dependencies.
 
 ```bash
-git clone https://github.com/lucasferrazseo/ai-bots-list.git
+git clone https://github.com/LucasFerrazSEO/ai-bots-list.git
 cd ai-bots-list
 ```
 
-## Como usar, passo a passo
+## Usage
 
-**1. Aponte para o seu `robots.txt`** (arquivo local):
+**1. Point it at your `robots.txt`** (local file):
 
 ```bash
 python ai_bots_check.py robots.txt
 ```
 
-**2. Ou confira o robots.txt de qualquer site direto do terminal**, sem
-baixar o arquivo antes:
+**2. Or check any site's robots.txt straight from the terminal**, without
+downloading the file first:
 
 ```bash
 curl -s https://exemplo.com/robots.txt | python ai_bots_check.py -
 ```
 
-**3. Leia o resultado, separado por categoria.** Exemplo real, de um
-robots.txt que bloqueia só o GPTBot:
+**3. Read the result, grouped by category.** Real output (excerpt) from a
+robots.txt that blocks only GPTBot. The tool prints its report in
+Brazilian Portuguese.
 
 ```
 === ai-bots-check: robots.txt (caminho testado: /) ===
+
+-- BUSCA COM IA --
+  OAI-SearchBot            ChatGPT Search                   liberado — bloco User-agent: *
+  ChatGPT-User             Navegação do ChatGPT             liberado — bloco User-agent: *
+  ...
 
 -- TREINAMENTO E COLETA --
   GPTBot                   Coleta para treinamento          BLOQUEADO — bloco próprio (GPTBot)
@@ -60,56 +82,57 @@ robots.txt que bloqueia só o GPTBot:
   ...
 ```
 
-**4. Teste um caminho específico**, não só a raiz do site:
+**4. Test a specific path**, not just the site root:
 
 ```bash
 python ai_bots_check.py robots.txt --caminho /blog/
 ```
 
-**5. Filtre por categoria**, se só quiser ver os bots de busca (os que
-alimentam resposta em tempo real) ou só os de treinamento:
+**5. Filter by category** if you only want the search bots (the ones that
+feed real-time answers) or only the training bots:
 
 ```bash
 python ai_bots_check.py robots.txt --categoria busca
 ```
 
-## Perguntas frequentes
+## FAQ
 
-**ai-bots-list é realmente grátis?**
-Sim. O código é MIT e os dados de `ai_bots.json` são CC BY 4.0 — pode
-reusar livremente, com atribuição.
+**Is ai-bots-list really free?**
+Yes. The code is MIT and the data in `ai_bots.json` is CC BY 4.0. You can
+reuse it freely, with attribution.
 
-**A lista cobre todos os bots de IA que existem?**
-Cobre os provedores mais relevantes em 2026. Não é exaustiva, e novos bots
-aparecem com frequência — contribuições são bem-vindas.
+**Does the list cover every AI bot out there?**
+It covers the most relevant providers in 2026. It is not exhaustive, and
+new bots show up often. Contributions are welcome.
 
-**Bloquear um bot de busca no robots.txt impede aparecer na resposta da
-IA?**
-Tende a impedir, mas cada provedor documenta separadamente o que faz com
-um bloqueio. A ferramenta mostra a regra do seu robots.txt, não garante o
-comportamento do lado da IA.
+**Does blocking a search bot in robots.txt keep me out of AI answers?**
+It tends to, but each provider documents separately what it does with a
+block. The tool shows the rule in your robots.txt, it does not guarantee
+how the AI side behaves.
 
-**Isso funciona junto com o `ai-crawler-log-parser`?**
-Sim — os dois usam a mesma estrutura de `ai_bots.json`. Depois de decidir
-o que bloquear ou liberar aqui, use o
-[`ai-crawler-log-parser`](https://github.com/lucasferrazseo/ai-crawler-log-parser)
-para conferir, pelo log do servidor, se os bots realmente respeitaram a
-regra.
+**Does this work together with `ai-crawler-log-parser`?**
+Yes. Both use the same `ai_bots.json` structure. Once you decide what to
+block or allow here, use
+[`ai-crawler-log-parser`](https://github.com/LucasFerrazSEO/ai-crawler-log-parser)
+to check in your server log whether the bots actually followed the rule.
 
-## Limitações
+## Limitations
 
-Parsing simples de robots.txt: cobre `Disallow`/`Allow` por prefixo de
-caminho, não trata wildcard (`*`) nem `$` de fim de string do jeito
-completo do protocolo. Para robots.txt com regras complexas, confira o
-resultado manualmente.
+Simple robots.txt parsing: it handles `Disallow`/`Allow` by path prefix
+and does not handle wildcards (`*`) or the end-of-string `$` the way the
+full protocol does. For robots.txt files with complex rules, check the
+result by hand.
 
-## Licença
+## Contributing
 
-Código (`ai_bots_check.py`): MIT — ver [LICENSE](LICENSE).
-Dados (`ai_bots.json`): CC BY 4.0 — ver [DATA-LICENSE](DATA-LICENSE).
-Reuso livre com atribuição a [Lucas Ferraz](https://lucasferraz.com).
+Bug reports and suggestions are welcome through [GitHub Issues](https://github.com/LucasFerrazSEO/ai-bots-list/issues).
 
-## Autor
+## Author
 
-[Lucas Ferraz](https://lucasferraz.com) — especialista em SEO, criação de
-sites e SEO para IA, fundador da [Lucas Ferraz SEO](https://lucasferrazseo.com).
+[Lucas Ferraz](https://lucasferraz.com) is an SEO, website development and Generative Engine Optimization specialist and the founder of [Lucas Ferraz SEO](https://lucasferrazseo.com).
+
+## License
+
+MIT. See [LICENSE](LICENSE). The data in `ai_bots.json` is licensed under
+CC BY 4.0, see [DATA-LICENSE](DATA-LICENSE); free reuse with attribution
+to [Lucas Ferraz](https://lucasferraz.com).
